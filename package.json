@@ -1,0 +1,29 @@
+{
+  "name": "backend-easyforms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krazykarthik2/backend-easyforms.git"
+  },
+  "keywords": [
+    "forms",
+    "easyforms"
+  ],
+  "author": "krazykarthik2",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krazykarthik2/backend-easyforms/issues"
+  },
+  "homepage": "https://github.com/krazykarthik2/backend-easyforms#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.7"
+  }
+}
