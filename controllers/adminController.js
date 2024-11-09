@@ -1,37 +1,68 @@
 const Admin = require('../models/Admin');
 
 exports.getAdmins = async (req, res) => {
-    const admins = await Admin.find();
-    res.status(200).json(admins);
+    try{
+        const query = req.query;
+        for (const key in query) {
+            if(query[key].startsWith('{') && query[key].endsWith('}')){
+                query[key] = JSON.parse(query[key]);
+            }
+        }
+        const admins = await Admin.find(query||{},{password:0});
+        res.status(200).json(admins);
+    }catch(err){
+        if(err.code === 11000){
+            res.status(400).json({message:'Admin already exists'});
+        }else{
+            res.status(500).json({message:err.message});
+        }
+    }
 };
 
 exports.getAdminById = async (req, res) => {
-    const { id } = req.params;
-    const admin = await Admin.findById(id);
-    res.status(200).json(admin);
+    try{
+        const { id } = req.params;
+        const admin = await Admin.findById(id,{password:0});
+        res.status(200).json(admin);
+    }catch(err){
+
+        res.status(500).json({message:err.message});
+    }
 };
 
 exports.createAdmin = async (req, res) => {
-    const admin = new Admin(req.body);
+    try{
+        const admin = new Admin(req.body);
     admin.createdAt = new Date();
     await admin.save();
-    res.status(201).json(admin);
+        res.status(201).json(admin);
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
 };
 
 exports.updateAdmin = async (req, res) => {
-    const { id } = req.params;
-    const admin = await Admin.findByIdAndUpdate(id, req.body, { new: true });
-    admin.updatedAt = new Date();
-    await admin.save();
-    res.status(200).json(admin);
+    try{
+        const { id } = req.params;
+        const admin = await Admin.findByIdAndUpdate(id, req.body, { new: true });
+        admin.updatedAt = new Date();
+        await admin.save();
+        res.status(200).json(admin);
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
 };
 
 exports.deleteAdmin = async (req, res) => {
-    const { id } = req.params;
-    const admin = await Admin.findById(id);
-    if (req.email !== admin.email) return res.status(401).json({ message: 'Unauthorized to delete another admin' });
-    await admin.deleteOne();
-    res.status(200).json({ message: 'Admin deleted' });
+    try{
+        const { id } = req.params;
+        const admin = await Admin.findById(id);
+        if (req.email !== admin.email) return res.status(401).json({ message: 'Unauthorized to delete another admin' });
+        await admin.deleteOne();
+        res.status(200).json({ message: 'Admin deleted' });
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
 };
 
 

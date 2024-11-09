@@ -24,7 +24,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/auth/admin', authRoutes_admin);
 app.use('/api/auth/user', authRoutes_user);
-app.use('/api/accounts/users', userRoutes);
+app.use('/api/accounts/users', userRoutes); 
 app.use('/api/accounts/admins', adminRoutes);
 // Error handling middleware
 app.use(errorHandler);

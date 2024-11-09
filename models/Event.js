@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    id: { type: String, required: true, unique: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }],
