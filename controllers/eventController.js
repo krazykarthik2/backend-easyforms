@@ -31,6 +31,15 @@ exports.getEventById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+exports.getEventBySlug = async (req, res) => {
+    try {
+        const event = await Event.findOne({eventSlug:req.params.slug});
+        if (!event) return res.status(404).json({ message: 'Event not found' });
+        res.json(event);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // Update an event
 exports.updateEvent = async (req, res) => {

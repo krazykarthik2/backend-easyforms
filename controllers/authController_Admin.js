@@ -47,7 +47,12 @@ exports.loginAdminByJWT = async (req, res) => {
 };
 
 exports.logoutAdmin = async (req, res) => {
-  const admin = await Admin.findOne({ email: req.user.email });
+  console.log("logoutAdmin", req.email, req.password);
+  const admin = await Admin.findOne({ email: req.email, password: req.password });
+  if (!admin) {
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+  console.log("logoutAdmin", admin);
   admin.lastLogout = new Date();
   await admin.save();
   res.status(200).json({ message: "Logged out" });

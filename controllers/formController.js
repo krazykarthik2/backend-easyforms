@@ -13,12 +13,10 @@ exports.createForm = async (req, res) => {
         // formId should be unique for all forms in an event
         const existingForm = await Form.findOne({formId,eventId});
         if(existingForm)return res.status(400).json({message:"Form ID already exists"});
-
         
         if(!event)return res.status(404).json({message:"Event not found"});
 
-        const form = new Form({formId,name,createdBy,eventId});
-        // const form = new Form({formId,name,attributes,createdBy,eventId});
+        const form = new Form({formId,name,attributes,createdBy,eventId});
         await form.save();
         event.forms.push(form._id);
         await event.save();
@@ -54,7 +52,7 @@ exports.getFormById = async (req, res) => {
 
 exports.getFormSlugByEventSlug = async (req, res) => {
     try {
-        const event = await Event.findOne({slug:req.params.eventSlug});
+        const event = await Event.findOne({eventSlug:req.params.eventSlug});
         if(!event)return res.status(404).json({message:"Event not found"});
         const eventId = event._id;
         const form = await Form.findOne({formId:req.params.slug,eventId:eventId}).populate('createdBy');    

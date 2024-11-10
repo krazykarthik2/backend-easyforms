@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { createForm, getAllForms, getFormById, updateForm, deleteForm ,getFormSlugByEventSlug,getFormSlugByEventId} = require('../controllers/formController');
 const { loadToken, getUserFromToken, verifyAdminToken } = require('../middleware/authMiddleware');
+const responseRoutes = require('./responseRoutes');
+
+router.use('/responses', responseRoutes);
+
 router.post('/create',[loadToken, getUserFromToken, verifyAdminToken], createForm);
 router.get('/', getAllForms);
 router.get('/:id', getFormById);

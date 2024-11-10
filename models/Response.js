@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
-
+const { responseFieldSchema } = require('./ResponseField');
 const responseSchema = new mongoose.Schema({
-    form: { type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true },
-    event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
+    formId: { type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true },
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
     answers: {
-        type: [Map],
-        of: mongoose.Schema.Types.Mixed, // Allows different data types in responses
+        type: [responseFieldSchema],
+        required: true
     },
-    submittedAt: { type: Date, default: Date.now }
+    submittedAt: { type: Date, default: Date.now },
+    submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    
 });
 
 module.exports = mongoose.model('Response', responseSchema);

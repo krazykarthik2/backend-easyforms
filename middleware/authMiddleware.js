@@ -34,7 +34,7 @@ exports.getUserFromToken = (req, res, next) => {
 exports.verifyUserToken = (req, res, next) => {
   const token = req.token;
   if (req.role !== "user") {
-    console.log("unauthorized", req.role);
+    console.log("unauthorized user:","role is",req.role);
     return res.status(401).json({ message: "Unauthorized" });
   }
   tryLoginUser(req.email, req.password)

@@ -10,6 +10,7 @@ const authRoutes_admin = require('./routes/authRoutes_admin');
 const authRoutes_user = require('./routes/authRoutes_user');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
+const respondRoutes = require('./routes/respondRoutes');
 dotenv.config();
 const app = express();
 
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/events', eventRoutes);
 app.use('/api/forms', formRoutes);
+app.use('/api/respond', respondRoutes);
 app.use('/api/auth/admin', authRoutes_admin);
 app.use('/api/auth/user', authRoutes_user);
 app.use('/api/accounts/users', userRoutes); 
