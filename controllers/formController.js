@@ -4,10 +4,8 @@ const Event = require('../models/Event');
 // Create a new form
 exports.createForm = async (req, res) => {
     try {
-        console.log(req.body);
     //     if(!req.user)return res.status(401).json({message:"Unauthorized"});
         const createdBy = req.user._id;
-        console.log(createdBy);
         const {formId,name,attributes,eventId} = req.body;
         const event = await Event.findById(req.body.eventId);
         // formId should be unique for all forms in an event
@@ -23,7 +21,7 @@ exports.createForm = async (req, res) => {
 
         res.status(201).json(form);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(400).json({ message: error.message });
     }
 };
@@ -41,7 +39,7 @@ exports.getAllForms = async (req, res) => {
 // Get a single form by ID
 exports.getFormById = async (req, res) => {
     try {
-        console.log(req.params.id);
+        console.log('getFormById',req.params.id);
         const form = await Form.findById(req.params.id).populate('createdBy');
         if (!form) return res.status(404).json({ message: 'Form not found' });
         res.status(200).json(form);

@@ -6,7 +6,7 @@ exports.createUser = async (req, res) => {
     res.status(201).json(user);
   } catch (err) {
     //duplicate email error may occur
-    console.log(err);
+    console.error('createUser',err);
     if (err.code === 11000)
       return res.status(400).json({ message: "Email already exists" });
     res.status(500).json({ message: err.message });
@@ -15,11 +15,11 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(req.body);
+    console.log('updateUser',req.body);
     const user = await User.findByIdAndUpdate(id, req.body, { new: true });
     res.status(200).json(user);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -34,7 +34,7 @@ exports.deleteUser = async (req, res) => {
     await user.deleteOne();
     res.status(200).json({ message: "User deleted" });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -59,11 +59,11 @@ exports.getAllUsers = async (req, res) => {
         req.query[key] = JSON.parse(req.query[key]);
       }
     }
-    console.log(req.query);
+    console.log('getAllUsers', req.query);
     const users = await User.find(req.query || {}, { password: 0 });
     res.status(200).json(users);
   } catch (err) {
-    console.log(err);
+    console.error('getAllUsers',err);
     res.status(500).json({ message: err.message });
   }
 };

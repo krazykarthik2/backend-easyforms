@@ -1,5 +1,9 @@
 const Event = require('../models/Event');
-
+const mongoose = require('mongoose');
+require('../models/Form');
+require('../models/Response');
+const Form = mongoose.model('Form');
+const Response = mongoose.model('Response');
 // Create a new event
 exports.createEvent = async (req, res) => {
     try {
@@ -56,6 +60,9 @@ exports.updateEvent = async (req, res) => {
 exports.deleteEvent = async (req, res) => {
     try {
         const event = await Event.findByIdAndDelete(req.params.id);
+        const forms = await Form.find({eventId:req.params.id});
+        const responses = await Response.deleteMany({formId:{$in:forms.map(form => form._id)}});
+        await Promise.all(forms.map(form => form.deleteOne()));
         if (!event) return res.status(404).json({ message: 'Event not found' });
         res.json({ message: 'Event deleted' });
     } catch (error) {

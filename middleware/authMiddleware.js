@@ -4,7 +4,6 @@ const { tryLoginUser } = require("../controllers/authController_User");
 
 exports.loadToken = (req, res, next) => {
   const headerauth = req.headers.authorization;
-  console.log(req.headers);
   let token;
   if (headerauth) {
     token = headerauth.split(" ")[1];

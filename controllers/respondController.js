@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Response = require("../models/Response");
 require("../models/Form");
 const Form = mongoose.model("Form");
-
+const validator = require("validator");
 // Submit a response for a form
 exports.respondToForm = async (req, res) => {
   try {
@@ -17,7 +17,8 @@ exports.respondToForm = async (req, res) => {
     // Validation logic based on the form's field definitions
     const errors = [];
     form.attributes.forEach((attribute, index) => {
-      const value = responseData[index];
+      const key  = Object.keys(responseData[index])[0];
+      const value = responseData[index][key];
 
       // Check if required fields are filled
       if (
@@ -27,6 +28,9 @@ exports.respondToForm = async (req, res) => {
         errors.push(`${attribute.label} is required.`);
       }
 
+      if(attribute.type === "email" && !validator.isEmail(value)){
+        errors.push(`${attribute.label} is not a valid email.`);
+      }
       // TODO: Add additional validation as needed based on fieldType (e.g., checkboxes, dropdowns)
       // ...
     });
@@ -49,3 +53,21 @@ exports.respondToForm = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.checkResponse = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const formId = req.params.formId;
+    const response = await Response.findOne({
+      submittedBy: userId,
+      formId: formId,
+    });
+    if (response) {
+      return res.status(200).json({ result:true, message: "Response already submitted" });
+    }
+    return res.status(200).json({ result: false, message: "Response not submitted" });
+  } catch (error) {
+    console.log("checkResponse", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
