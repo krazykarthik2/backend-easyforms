@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const eventController = require('../controllers/eventController');
+const { getAllEvents, getEventBySlug, createEvent, getEventById, updateEvent, deleteEvent } = require('../controllers/eventController');
+const eventImageRoutes = require('../routes/eventImageRoutes');
+router.get('/', getAllEvents);
+router.get('/s/:slug', getEventBySlug);
+router.post('/create', createEvent);
+router.get('/:id', getEventById);
+router.put('/edit/:id', updateEvent);
+router.delete('/delete/:id', deleteEvent);
 
-router.get('/', eventController.getAllEvents);
-router.get('/s/:slug', eventController.getEventBySlug);
-router.post('/create', eventController.createEvent);
-router.get('/:id', eventController.getEventById);
-router.put('/edit/:id', eventController.updateEvent);
-router.delete('/delete/:id', eventController.deleteEvent);
-
+router.use('/images', eventImageRoutes);
 module.exports = router;

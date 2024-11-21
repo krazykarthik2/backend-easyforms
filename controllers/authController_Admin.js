@@ -4,20 +4,29 @@ require("dotenv").config();
 const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME || "1h";
 
 exports.loginAdmin = async (req, res) => {
-  const { email, password } = req.body;
-  const admin = await tryLoginAdmin(email, password);
-  if (!admin) {
-    return res.status(401).json({ message: "Invalid credentials" });
+  try {
+    const { email, password } = req.body;
+    const admin = await tryLoginAdmin(email, password);
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    generateResponse(admin, res);
+  } catch (err) {
+    console.log("error:", err);
+    res.status(500).json({ message: err.message });
   }
-  generateResponse(admin, res);
 };
 
 const tryLoginAdmin = async (email, password) => {
-  const admin = await Admin.findOne({ email });
-  if (!admin || admin.password !== password) {
-    return null;
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin || admin.password !== password) {
+      return null;
+    }
+    return admin;
+  } catch (err) {
+    throw err;
   }
-  return admin;
 };
 exports.tryLoginAdmin = tryLoginAdmin;
 
@@ -33,22 +42,31 @@ const generateResponse = (admin, res) => {
   );
   res.status(200).json({ admin, token });
 };
+
 exports.loginAdminByJWT = async (req, res) => {
-  const token = req.token;
-  if (!token) return res.status(401).json({ message: "No token provided" });
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const admin = await tryLoginAdmin(decoded.email, decoded.password);
-  if (!admin) {
-    return res.status(401).json({ message: "Invalid credentials" });
+  try {
+    const token = req.token;
+    if (!token) return res.status(401).json({ message: "No token provided" });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const admin = await tryLoginAdmin(decoded.email, decoded.password);
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    admin.lastLogin = new Date();
+    await admin.save();
+    generateResponse(admin, res);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-  admin.lastLogin = new Date();
-  await admin.save();
-  generateResponse(admin, res);
 };
 
 exports.logoutAdmin = async (req, res) => {
+  try{
   console.log("logoutAdmin", req.email, req.password);
-  const admin = await Admin.findOne({ email: req.email, password: req.password });
+  const admin = await Admin.findOne({
+    email: req.email,
+    password: req.password,
+  });
   if (!admin) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
@@ -56,4 +74,7 @@ exports.logoutAdmin = async (req, res) => {
   admin.lastLogout = new Date();
   await admin.save();
   res.status(200).json({ message: "Logged out" });
+  }catch(err){
+      res.status(500).json({message:err.message});
+  }
 };

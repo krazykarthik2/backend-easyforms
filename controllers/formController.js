@@ -1,6 +1,9 @@
 const Form = require('../models/Form');
 const Event = require('../models/Event');
-
+const PopulateCreatedBySchema = {
+    path: 'createdBy',
+    select: 'name email' 
+}
 // Create a new form
 exports.createForm = async (req, res) => {
     try {
@@ -40,7 +43,7 @@ exports.getAllForms = async (req, res) => {
 exports.getFormById = async (req, res) => {
     try {
         console.log('getFormById',req.params.id);
-        const form = await Form.findById(req.params.id).populate('createdBy');
+        const form = await Form.findById(req.params.id).populate(PopulateCreatedBySchema);
         if (!form) return res.status(404).json({ message: 'Form not found' });
         res.status(200).json(form);
     } catch (error) {
@@ -53,7 +56,7 @@ exports.getFormSlugByEventSlug = async (req, res) => {
         const event = await Event.findOne({eventSlug:req.params.eventSlug});
         if(!event)return res.status(404).json({message:"Event not found"});
         const eventId = event._id;
-        const form = await Form.findOne({formId:req.params.slug,eventId:eventId}).populate('createdBy');    
+        const form = await Form.findOne({formId:req.params.slug,eventId:eventId}).populate(PopulateCreatedBySchema);    
         if(!form)return res.status(404).json({message:"Form not found"});
         res.json(form);
     } catch (error) {
@@ -63,7 +66,7 @@ exports.getFormSlugByEventSlug = async (req, res) => {
 
 exports.getFormSlugByEventId = async (req, res) => {
     try {
-        const form = await Form.findOne({formId:req.params.slug,eventId:req.params.eventId}).populate('createdBy');    
+        const form = await Form.findOne({formId:req.params.slug,eventId:req.params.eventId}).populate(PopulateCreatedBySchema);    
         if(!form)return res.status(404).json({message:"Form not found"});
         res.json(form);
     } catch (error) {
