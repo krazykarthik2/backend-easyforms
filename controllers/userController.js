@@ -53,13 +53,7 @@ exports.getUserById = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    for (const key in req.query) {
-      // find if query[key] is on JSON.stringified object or not
-      if (req.query[key].startsWith("{") && req.query[key].endsWith("}")) {
-        req.query[key] = JSON.parse(req.query[key]);
-      }
-    }
-    console.log('getAllUsers', req.query);
+    
     const users = await User.find(req.query || {}, { password: 0 });
     res.status(200).json(users);
   } catch (err) {

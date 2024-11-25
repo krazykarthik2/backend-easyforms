@@ -1,11 +1,14 @@
-const Admin = require("../models/Admin");
+require("../models/Admin");
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
 require("dotenv").config();
+const Admin =mongoose.model("Admin")
 const JWT_EXPIRATION_TIME = process.env.JWT_EXPIRATION_TIME || "1h";
 
 exports.loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(email,password)
     const admin = await tryLoginAdmin(email, password);
     if (!admin) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -19,11 +22,9 @@ exports.loginAdmin = async (req, res) => {
 
 const tryLoginAdmin = async (email, password) => {
   try {
-    const admin = await Admin.findOne({ email });
-    if (!admin || admin.password !== password) {
-      return null;
-    }
-    return admin;
+    const admin = await Admin.findOne({email,password})    
+    console.log(admin)
+    return admin; 
   } catch (err) {
     throw err;
   }

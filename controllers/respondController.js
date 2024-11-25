@@ -9,28 +9,36 @@ exports.respondToForm = async (req, res) => {
     const { formId } = req.params;
     const responseData = req.body; // Incoming responses as key-value pairs
     console.log("respondToForm", responseData);
-
+  
     // Find the form to get field definitions
     const form = await Form.findById(formId);
     if (!form) return res.status(404).json({ message: "Form not found" });
 
     // Validation logic based on the form's field definitions
     const errors = [];
-    form.attributes.forEach((attribute, index) => {
+    form.attributes.forEach((item, index) => {
       const key  = Object.keys(responseData[index])[0];
-      const value = responseData[index][key];
+      let value = responseData[index][key];
 
+      if (!(key in item.question)){
+        throw "some field is missing";
+      }
+      console.log('$$$$$$$$$$$$$$$$$$',value,key)
       // Check if required fields are filled
+      if(key=="paragraphInput" || key=="textInput"){
+        value= value.trim()// trim all paragraphInputs
+      }
       if (
-        attribute.required &&
-        (value === undefined || value === null || value === "")
+        item.required &&
+        (value === undefined || value === null || value === "" ||( Array.isArray(value)&&value.length===0) )
       ) {
-        errors.push(`${attribute.label} is required.`);
+        errors.push(`${item.label} is required.`);
       }
 
-      if(attribute.type === "email" && !validator.isEmail(value)){
-        errors.push(`${attribute.label} is not a valid email.`);
+      if(key === "emailInput" && !validator.isEmail(value)){
+        errors.push(`${item.label} is not a valid email.`);
       }
+      
       // TODO: Add additional validation as needed based on fieldType (e.g., checkboxes, dropdowns)
       // ...
     });
