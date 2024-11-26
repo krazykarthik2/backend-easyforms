@@ -11,6 +11,7 @@ const authRoutes_user = require('./routes/authRoutes_user');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
 const respondRoutes = require('./routes/respondRoutes');
+const helpRoutes = require('./routes/helpRoutes');
 dotenv.config();
 const app = express();
 
@@ -18,9 +19,7 @@ app.use(express.json({limit: '50mb'}));//temporary fix but need to restrict this
 app.use(cors());
 connectDB();
 // Routes
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/help.md');
-});
+
 app.use('/api/events', eventRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/respond', respondRoutes);
@@ -28,6 +27,7 @@ app.use('/api/auth/admin', authRoutes_admin);
 app.use('/api/auth/user', authRoutes_user);
 app.use('/api/accounts/users', userRoutes); 
 app.use('/api/accounts/admins', adminRoutes);
+app.use('/api/help',helpRoutes);
 // Error handling middleware
 app.use(errorHandler);
 
